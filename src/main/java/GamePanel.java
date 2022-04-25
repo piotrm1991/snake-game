@@ -49,20 +49,51 @@ public class GamePanel extends JPanel implements ActionListener {
     public void draw(Graphics g) {
 
         //grid
-        for(int i=0; i<SCREEN_HEIGHT/UNIT_SIZE; i++) {
+        for(int i = 0; i < SCREEN_HEIGHT/UNIT_SIZE; i++) {
             g.drawLine(i*UNIT_SIZE,0,i*UNIT_SIZE, SCREEN_HEIGHT);
             g.drawLine(0,i*UNIT_SIZE,SCREEN_WIDTH, i*UNIT_SIZE);
         }
 
+        g.setColor(Color.red);
+        g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
+
+        for(int i = 0; i < this.bodyParts; i++) {
+            if(i == 0) {
+                g.setColor(Color.green);
+                g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
+            } else {
+                g.setColor(new Color(45,180,0));
+                g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
+            }
+        }
 
     }
 
     public void newApple() {
-
+        this.appleX = random.nextInt((int)(SCREEN_WIDTH/UNIT_SIZE))*UNIT_SIZE;
+        this.appleY = random.nextInt((int)(SCREEN_HEIGHT/UNIT_SIZE))*UNIT_SIZE;
     }
 
     public void move() {
+        for(int i = this.bodyParts; i > 0; i--) {
+            this.x[i] = this.x[i-1];
+            this.y[i] = this.y[i-1];
+        }
 
+        switch (direction) {
+            case 'U':
+                this.y[0] = this.y[0] - UNIT_SIZE;
+                break;
+            case 'D':
+                this.y[0] = this.y[0] + UNIT_SIZE;
+                break;
+            case 'L':
+                this.x[0] = this.x[0] - UNIT_SIZE;
+                break;
+            case 'R':
+                this.x[0] = this.x[0] + UNIT_SIZE;
+                break;
+        }
     }
 
     public void checkApple() {
