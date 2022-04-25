@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.Collection;
 import java.util.Random;
 
 public class GamePanel extends JPanel implements ActionListener {
@@ -55,15 +54,15 @@ public class GamePanel extends JPanel implements ActionListener {
         }
 
         g.setColor(Color.red);
-        g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
+        g.fillOval(this.appleX, this.appleY, UNIT_SIZE, UNIT_SIZE);
 
         for(int i = 0; i < this.bodyParts; i++) {
             if(i == 0) {
                 g.setColor(Color.green);
-                g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
+                g.fillRect(this.x[i], this.y[i], UNIT_SIZE, UNIT_SIZE);
             } else {
                 g.setColor(new Color(45,180,0));
-                g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
+                g.fillRect(this.x[i], this.y[i], UNIT_SIZE, UNIT_SIZE);
             }
         }
 
@@ -80,7 +79,7 @@ public class GamePanel extends JPanel implements ActionListener {
             this.y[i] = this.y[i-1];
         }
 
-        switch (direction) {
+        switch (this.direction) {
             case 'U':
                 this.y[0] = this.y[0] - UNIT_SIZE;
                 break;
@@ -101,7 +100,33 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     public void checkCollisions() {
+        //checks if head collides with body
+        for(int i = this.bodyParts; i > 0; i--) {
+            if((this.x[0] == this.x[i]) && (this.y[0] == this.y[i])) {
+                this.running = false;
+            }
+        }
 
+        //check if head collides with left border
+        if(this.x[0] < 0) {
+            this.running = false;
+        }
+        //checks if head collides with right border
+        if(this.x[0] > SCREEN_WIDTH) {
+            this.running = false;
+        }
+        //check if head collides with top border
+        if(this.y[0] < 0) {
+            this.running = false;
+        }
+        //check if head touches bottom border
+        if(this.y[0] > SCREEN_HEIGHT) {
+            this.running = false;
+        }
+
+        if(!this.running) {
+            this.timer.stop();
+        }
     }
 
     public void gameOver(Graphics g) {
@@ -110,7 +135,12 @@ public class GamePanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        if(running) {
+            this.move();
+            this.checkApple();
+            this.checkCollisions();
+        }
+        this.repaint();
     }
 
     public class MyKeyAdapter extends KeyAdapter {
